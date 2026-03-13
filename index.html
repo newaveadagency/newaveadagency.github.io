@@ -611,7 +611,7 @@
     <div class="hero-card">
       <div class="hero-card-label">Zašto D&amp;D Sales</div>
       <div class="stat-row">
-        <div class="stat-num">0€</div>
+        <div class="stat-num" data-target="2000000" data-prefix="" data-suffix="€+">0€</div>
         <div class="stat-desc">Fiksnih troškova — radimo isključivo na proviziju</div>
       </div>
       <div class="stat-row">
@@ -817,3 +817,33 @@
 </script>
 </body>
 </html>
+<script>
+const counters = document.querySelectorAll('[data-target]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      const suffix = el.dataset.suffix || '';
+      const duration = 2000;
+      const step = target / (duration / 16);
+      let current = 0;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        if (target >= 1000000) {
+          el.textContent = (current / 1000000).toFixed(1) + 'M' + suffix;
+        } else {
+          el.textContent = Math.floor(current).toLocaleString() + suffix;
+        }
+      }, 16);
+      observer.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+counters.forEach(c => observer.observe(c));
+</script>
