@@ -1,11 +1,819 @@
 <!DOCTYPE html>
 <html lang="hr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>D&D Sales Academy</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D&D Sales – Prodajni Partner za Rast</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f2ec;
+      --gold: #c9a84c;
+      --gold-light: #e8c96a;
+      --red: #b83232;
+      --grey: #2a2a2a;
+      --grey-mid: #555;
+      --grey-light: #999;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.18s ease;
+      opacity: 0.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 60px;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 4px;
+      color: var(--gold);
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      color: var(--grey-light);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--black);
+      padding: 10px 24px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 140px 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(120px, 20vw, 280px);
+      color: rgba(201,168,76,0.03);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: 10px;
+    }
+
+    .hero-left { position: relative; z-index: 2; }
+    .hero-tag {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 7vw, 100px);
+      line-height: 0.95;
+      letter-spacing: 2px;
+      margin-bottom: 32px;
+    }
+    .hero-title .accent { color: var(--gold); display: block; }
+    .hero-title .red { color: var(--red); }
+
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.7;
+      color: rgba(245,242,236,0.7);
+      max-width: 480px;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--black);
+      padding: 16px 36px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,168,76,0.3); }
+    .btn-ghost {
+      border: 1px solid rgba(245,242,236,0.3);
+      color: var(--white);
+      padding: 16px 36px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-right {
+      position: relative; z-index: 2;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .hero-card {
+      background: var(--grey);
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 48px 40px;
+      max-width: 380px;
+      width: 100%;
+      position: relative;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 60px; height: 3px;
+      background: var(--gold);
+    }
+    .hero-card-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .stat-row {
+      display: flex; flex-direction: column;
+      border-bottom: 1px solid rgba(245,242,236,0.08);
+      padding: 20px 0;
+    }
+    .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-desc {
+      font-size: 13px;
+      color: rgba(245,242,236,0.6);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    /* TICKER */
+    .ticker {
+      background: var(--gold);
+      padding: 14px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-inner span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 4px;
+      color: var(--black);
+      padding: 0 40px;
+    }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* SECTIONS common */
+    section { padding: 120px 60px; }
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: block;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 4vw, 60px);
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-body {
+      font-size: 16px;
+      line-height: 1.8;
+      color: rgba(245,242,236,0.65);
+      max-width: 560px;
+    }
+
+    /* HOW IT WORKS */
+    #usluge { background: var(--grey); }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .steps { margin-top: 60px; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 32px;
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(245,242,236,0.08);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+    .step.visible { opacity: 1; transform: translateY(0); }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: rgba(201,168,76,0.2);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 60px;
+    }
+    .step-content h3 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .step-content p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(245,242,236,0.55);
+    }
+    .highlight-box {
+      background: var(--black);
+      border: 1px solid rgba(201,168,76,0.25);
+      padding: 48px 40px;
+      position: sticky;
+      top: 120px;
+    }
+    .highlight-box h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .highlight-box p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: rgba(245,242,236,0.6);
+      margin-bottom: 32px;
+    }
+    .pill-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+    .pill {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 14px; color: rgba(245,242,236,0.75);
+    }
+    .pill::before {
+      content: '✓';
+      display: inline-flex;
+      width: 22px; height: 22px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 700;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* EDUKACIJA */
+    #edukacija { background: var(--black); }
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+    .edu-card {
+      background: var(--grey);
+      padding: 40px 32px;
+      border-top: 3px solid transparent;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: default;
+    }
+    .edu-card:hover { border-top-color: var(--gold); transform: translateY(-4px); }
+    .edu-card.featured { border-top-color: var(--gold); background: #1e1e1e; }
+    .edu-icon {
+      font-size: 32px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .edu-card h3 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .edu-card p {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(245,242,236,0.55);
+    }
+    .edu-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      margin-bottom: 16px;
+    }
+
+    /* PROGRAM */
+    #program { background: var(--grey); }
+    .program-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      margin-bottom: 80px;
+      align-items: end;
+    }
+    .price-box {
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 40px;
+      text-align: center;
+      background: var(--black);
+    }
+    .price-old {
+      font-size: 18px;
+      color: var(--grey-light);
+      text-decoration: line-through;
+      margin-bottom: 8px;
+    }
+    .price-main {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .price-period {
+      font-size: 14px;
+      color: rgba(245,242,236,0.5);
+      margin-bottom: 24px;
+    }
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(245,242,236,0.07);
+    }
+    .timeline-week {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      min-width: 90px;
+      padding-top: 2px;
+    }
+    .timeline-content h4 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+    .timeline-content p { font-size: 13px; color: rgba(245,242,236,0.5); line-height: 1.6; }
+
+    /* PROCESS */
+    #proces { background: var(--black); }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-top: 64px;
+    }
+    .process-card {
+      padding: 40px 28px;
+      background: var(--grey);
+      position: relative;
+      overflow: hidden;
+    }
+    .process-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+    .process-card:hover::after { width: 100%; }
+    .process-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px;
+      color: rgba(201,168,76,0.1);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .process-card h3 { font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+    .process-card p { font-size: 14px; line-height: 1.7; color: rgba(245,242,236,0.55); }
+
+    /* CTA */
+    #kontakt {
+      background: var(--gold);
+      padding: 120px 60px;
+      text-align: center;
+    }
+    #kontakt .section-label { color: rgba(10,10,10,0.6); }
+    #kontakt .section-title { color: var(--black); max-width: 700px; margin: 0 auto 24px; }
+    #kontakt .section-title em { color: var(--red); }
+    #kontakt p {
+      color: rgba(10,10,10,0.65);
+      font-size: 17px;
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+    }
+    .btn-dark {
+      background: var(--black);
+      color: var(--gold);
+      padding: 18px 44px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    .btn-dark:hover { background: var(--grey); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+    .btn-ghost-dark {
+      border: 2px solid rgba(10,10,10,0.4);
+      color: var(--black);
+      padding: 18px 44px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+      margin-left: 16px;
+    }
+    .btn-ghost-dark:hover { background: rgba(10,10,10,0.1); }
+
+    /* FOOTER */
+    footer {
+      background: #050505;
+      padding: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 4px;
+      color: var(--gold);
+    }
+    .footer-logo span { color: rgba(245,242,236,0.4); }
+    footer p {
+      font-size: 12px;
+      color: rgba(245,242,236,0.25);
+      letter-spacing: 1px;
+    }
+    .footer-links { display: flex; gap: 32px; }
+    .footer-links a {
+      font-size: 12px;
+      color: rgba(245,242,236,0.3);
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ANIMATIONS */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 120px 24px 60px; gap: 60px; }
+      .hero-right { display: none; }
+      section { padding: 80px 24px; }
+      .two-col, .program-header { grid-template-columns: 1fr; gap: 40px; }
+      .edu-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
+      #kontakt { padding: 80px 24px; }
+      .btn-ghost-dark { margin-left: 0; margin-top: 12px; display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">D&amp;<span>D</span> SALES</div>
+  <ul class="nav-links">
+    <li><a href="#usluge">Usluge</a></li>
+    <li><a href="#edukacija">Edukacija</a></li>
+    <li><a href="#proces">Proces</a></li>
+  </ul>
+  <a href="#kontakt" class="nav-cta">Besplatni poziv</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">SALES</div>
+
+  <div class="hero-left">
+    <div class="hero-tag">Provizijski model · Nula rizika</div>
+    <h1 class="hero-title">
+      Vaša prodaja.<br>
+      <span class="accent">Naš posao.</span>
+      <span class="red">Vaš rast.</span>
+    </h1>
+    <p class="hero-sub">
+      D&amp;D Sales preuzima vašu prodaju na proviziju — vi se fokusirate na uslugu, mi donosimo klijente. Bez fiksnih troškova, bez rizika, samo rezultati.
+    </p>
+    <div class="hero-buttons">
+      <a href="#kontakt" class="btn-primary">Dogovorite besplatni poziv</a>
+      <a href="#usluge" class="btn-ghost">Saznajte više</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card">
+      <div class="hero-card-label">Zašto D&amp;D Sales</div>
+      <div class="stat-row">
+        <div class="stat-num">0€</div>
+        <div class="stat-desc">Fiksnih troškova — radimo isključivo na proviziju</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-num">3×</div>
+        <div class="stat-desc">Prosječno povećanje prodajnih konverzija</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-num">14</div>
+        <div class="stat-desc">Dana do prvih prodajnih aktivnosti</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>Prodaja na proviziju</span>
+    <span>·</span>
+    <span>High Ticket usluge</span>
+    <span>·</span>
+    <span>Sales edukacija</span>
+    <span>·</span>
+    <span>Bez fiksnih troškova</span>
+    <span>·</span>
+    <span>Vaš rast je naš cilj</span>
+    <span>·</span>
+    <span>Prodaja na proviziju</span>
+    <span>·</span>
+    <span>High Ticket usluge</span>
+    <span>·</span>
+    <span>Sales edukacija</span>
+    <span>·</span>
+    <span>Bez fiksnih troškova</span>
+    <span>·</span>
+    <span>Vaš rast je naš cilj</span>
+    <span>·</span>
+  </div>
+</div>
+
+<!-- USLUGE -->
+<section id="usluge">
+  <div class="two-col">
+    <div>
+      <span class="section-label">Prodajne usluge</span>
+      <h2 class="section-title">Prodajemo vaše <em>high ticket</em> usluge. Vi naplaćujete.</h2>
+      <p class="section-body">
+        Imate odličan produkt ili uslugu, ali vam nedostaje prodajni tim? D&amp;D Sales postaje vaš vanjski sales odjel — preuzimamo cijeli prodajni proces od prvog kontakta do zatvaranja posla.
+      </p>
+      <div class="steps">
+        <div class="step fade-up">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h3>Analiza i onboarding</h3>
+            <p>Upoznajemo vašu uslugu, ciljnu skupinu, konkurenciju i tržište. Definiramo prodajnu strategiju prilagođenu vašem poslu.</p>
+          </div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h3>Izgradnja prodajnog procesa</h3>
+            <p>Kreiramo skripte, materijale, CRM pipeline i komunikacijske tokove koji konvertiraju leade u klijente.</p>
+          </div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h3>Aktivna prodaja</h3>
+            <p>Naš tim preuzima pozive, sastanke i pregovore. Radite samo na fulfillmentu — mi brinemo o prodaji.</p>
+          </div>
+        </div>
+        <div class="step fade-up">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h3>Reporting i optimizacija</h3>
+            <p>Tjedni izvještaji, analiza konverzija i kontinuirano poboljšavanje rezultata — transparentno i mjerljivo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="highlight-box fade-up">
+        <h3>Zašto provizijski model radi za vas</h3>
+        <p>Nema fiksnih plaća, nema HR problema, nema rizika. Plaćate samo kad mi zaradimo za vas. To je jedini model koji garantira da su naši interesi potpuno usklađeni s vašima.</p>
+        <div class="pill-list">
+          <div class="pill">Nula fiksnih troškova</div>
+          <div class="pill">Iskusni sales profesionalci</div>
+          <div class="pill">Skalabilno po potrebi</div>
+          <div class="pill">Potpuna transparentnost</div>
+          <div class="pill">Brz onboarding — 14 dana</div>
+          <div class="pill">Prilagođeno svakoj industriji</div>
+        </div>
+        <a href="#kontakt" class="btn-primary">Dogovorite besplatnu konzultaciju</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUKACIJA -->
+<section id="edukacija">
+  <span class="section-label">Sales edukacija</span>
+  <h2 class="section-title fade-up">Jednom mjesečno. <em>Potpuno besplatno.</em></h2>
+  <p class="section-body fade-up">
+    Organiziramo besplatnu grupnu edukaciju o prodaji jednom mjesečno — otvorenu za sve koji žele unaprijediti svoje prodajne vještine. Dovedite tim, dovedite sebe.
+  </p>
+
+  <div class="edu-grid">
+    <div class="edu-card fade-up">
+      <span class="edu-icon">📅</span>
+      <h3>Jednom mjesečno</h3>
+      <p>Svaki mjesec organiziramo novu edukaciju s drugačijom temom iz svijeta prodaje — uvijek aktualno, uvijek praktično.</p>
+    </div>
+    <div class="edu-card featured fade-up">
+      <span class="edu-badge">Besplatno</span>
+      <span class="edu-icon">🎯</span>
+      <h3>Timska sales edukacija</h3>
+      <p>Interaktivna edukacija za vas i vaš tim. Realne situacije, provjerene tehnike i znanje koje možete odmah primijeniti.</p>
+    </div>
+    <div class="edu-card fade-up">
+      <span class="edu-icon">📞</span>
+      <h3>Besplatni 1on1 poziv</h3>
+      <p>Nakon edukacije, svaki sudionik ima mogućnost zakazati individualni poziv — razgovaramo o vašim specifičnim prodajnim izazovima.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCES -->
+<section id="proces">
+  <span class="section-label">Kako početi</span>
+  <h2 class="section-title fade-up">4 koraka do <em>boljih rezultata</em></h2>
+
+  <div class="process-grid">
+    <div class="process-card fade-up">
+      <div class="process-num">01</div>
+      <h3>Prijavite se na besplatni poziv</h3>
+      <p>Ispunite kratki formular. Zakazujemo 30-minutni discovery call bez ikakve obaveze.</p>
+    </div>
+    <div class="process-card fade-up">
+      <div class="process-num">02</div>
+      <h3>Analiza vaše situacije</h3>
+      <p>Upoznajemo vaš biznis, ciljeve i izazove. Identificiramo gdje imate najveći prostor za rast.</p>
+    </div>
+    <div class="process-card fade-up">
+      <div class="process-num">03</div>
+      <h3>Prilagođeni prijedlog</h3>
+      <p>Dobivate konkretan plan — bilo provizijski model ili edukacijski program, prilagođen vama.</p>
+    </div>
+    <div class="process-card fade-up">
+      <div class="process-num">04</div>
+      <h3>Krenemo zajedno</h3>
+      <p>Onboarding unutar 14 dana. Mjerljivi rezultati od prvog tjedna suradnje.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="kontakt">
+  <span class="section-label">Kontakt</span>
+  <h2 class="section-title">Spremni ste za <em>sljedeću razinu</em> prodaje?</h2>
+  <p>Zakazujte besplatni 30-minutni poziv. Bez pritiska, bez obaveza — samo konkretan razgovor o vašem rastu.</p>
+  <a href="mailto:info@ddsales.hr" class="btn-dark">Zakazite besplatni poziv</a>
+  <a href="#edukacija" class="btn-ghost-dark">Saznajte o edukaciji</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">D&amp;<span>D SALES</span></div>
+  <p>© 2025 D&amp;D Sales. Sva prava pridržana.</p>
+  <div class="footer-links">
+    <a href="#">Privatnost</a>
+    <a href="#">Uvjeti</a>
+    <a href="#">Kontakt</a>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+  function animRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animRing); }
+  animRing();
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.transform = 'translate(-50%,-50%) scale(1.6)'; ring.style.opacity = '1'; cursor.style.transform = 'translate(-50%,-50%) scale(0.5)'; });
+    el.addEventListener('mouseleave', () => { ring.style.transform = 'translate(-50%,-50%) scale(1)'; ring.style.opacity = '0.6'; cursor.style.transform = 'translate(-50%,-50%) scale(1)'; });
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up, .step').forEach(el => observer.observe(el));
+
+  // Ticker duplicate
+  const t = document.querySelector('.ticker-inner');
+  t.innerHTML += t.innerHTML;
+</script>
+</body>
 </html>
